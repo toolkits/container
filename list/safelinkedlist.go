@@ -48,9 +48,14 @@ func (this *SafeLinkedList) Front() *list.Element {
 	return this.L.Front()
 }
 
+// TODO 异步锁rcu
 func (this *SafeLinkedList) Len() int {
 	this.RLock()
 	defer this.RUnlock()
+	return this.L.Len()
+}
+
+func (this *SafeLinkedList) UnsafeLen() int {
 	return this.L.Len()
 }
 
@@ -70,7 +75,7 @@ func (this *SafeLinkedListLimited) PopBack(max int) []interface{} {
 
 func (this *SafeLinkedListLimited) PushFront(v interface{}) bool {
 	// maybe not consistent here
-	if this.SL.Len() >= this.MaxSize {
+	if this.SL.UnsafeLen() >= this.MaxSize {
 		return false
 	}
 
