@@ -48,8 +48,40 @@ func (this *SafeLinkedList) Front() *list.Element {
 	return this.L.Front()
 }
 
+// TODO 异步rcu锁
 func (this *SafeLinkedList) Len() int {
 	this.RLock()
 	defer this.RUnlock()
 	return this.L.Len()
+}
+
+// SafeLinkedList with Limited Size
+type SafeLinkedListLimited struct {
+	MaxSize int
+	SL      *SafeLinkedList
+}
+
+func NewSafeLinkedListLimited(maxSize int) *SafeLinkedListLimited {
+	return &SafeLinkedListLimited{SL: NewSafeLinkedList(), MaxSize: maxSize}
+}
+
+func (this *SafeLinkedListLimited) PopBack(max int) []interface{} {
+	return this.SL.PopBack(max)
+}
+
+func (this *SafeLinkedListLimited) PushFront(v interface{}) bool {
+	if this.SL.Len() >= this.MaxSize {
+		return false
+	}
+
+	this.SL.PushFront(v)
+	return true
+}
+
+func (this *SafeLinkedListLimited) Front() *list.Element {
+	return this.SL.Front()
+}
+
+func (this *SafeLinkedListLimited) Len() int {
+	return this.SL.Len()
 }
