@@ -177,6 +177,10 @@ func (this *SafeListLimited) Front() interface{} {
 	return this.SL.Front()
 }
 
+func (this *SafeListLimited) FrontAll() []interface{} {
+	return this.SL.FrontAll()
+}
+
 func (this *SafeListLimited) Len() int {
 	return this.SL.Len()
 }
