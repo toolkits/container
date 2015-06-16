@@ -169,6 +169,15 @@ func (this *SafeListLimited) PushFront(v interface{}) bool {
 	return true
 }
 
+func (this *SafeListLimited) PushFrontViolently(v interface{}) bool {
+	this.SL.PushFront(v)
+	if this.SL.Len() > this.maxSize {
+		this.SL.PopBack()
+	}
+
+	return true
+}
+
 func (this *SafeListLimited) RemoveAll() {
 	this.SL.RemoveAll()
 }
