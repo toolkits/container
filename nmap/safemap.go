@@ -61,6 +61,17 @@ func (this *SafeMap) Keys() []string {
 	return keys
 }
 
+func (this *SafeMap) Slice() []interface{} {
+	this.RLock()
+	defer this.RUnlock()
+
+	vals := make([]interface{}, 0)
+	for _, val := range this.M {
+		vals = append(vals, val)
+	}
+	return vals
+}
+
 func (this *SafeMap) ContainsKey(key string) bool {
 	this.RLock()
 	_, exists := this.M[key]
