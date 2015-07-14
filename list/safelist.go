@@ -21,6 +21,14 @@ func (this *SafeList) PushFront(v interface{}) *list.Element {
 	return e
 }
 
+func (this *SafeList) PushFrontBatch(vs []interface{}) {
+	this.Lock()
+	for _, item := range vs {
+		this.L.PushFront(item)
+	}
+	this.Unlock()
+}
+
 func (this *SafeList) PopBack() interface{} {
 	this.Lock()
 
@@ -166,6 +174,15 @@ func (this *SafeListLimited) PushFront(v interface{}) bool {
 	}
 
 	this.SL.PushFront(v)
+	return true
+}
+
+func (this *SafeListLimited) PushFrontBatch(vs []interface{}) bool {
+	if this.SL.Len() >= this.maxSize {
+		return false
+	}
+
+	this.SL.PushFrontBatch(vs)
 	return true
 }
 
