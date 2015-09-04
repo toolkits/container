@@ -19,6 +19,29 @@ func (this *StringIntMap) Put(key string, val int) {
 	this.M[key] = val
 }
 
+func (this *StringIntMap) Puts(m map[string]int) {
+	todo := make(map[string]int)
+	this.RLock()
+	for k, v := range m {
+		old, exists := this.M[k]
+		if exists && v == old {
+			continue
+		}
+		todo[k] = v
+	}
+	this.RUnlock()
+
+	if len(todo) == 0 {
+		return
+	}
+
+	this.Lock()
+	for k, v := range todo {
+		this.M[k] = v
+	}
+	this.Unlock()
+}
+
 func (this *StringIntMap) Get(key string) (int, bool) {
 	this.RLock()
 	defer this.RUnlock()
