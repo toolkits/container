@@ -15,7 +15,10 @@ func NewSafeLinkedList() *SafeLinkedList {
 }
 
 func (this *SafeLinkedList) PopBack(max int) []interface{} {
-	count := this.Len()
+	this.Lock()
+	defer this.Unlock()
+
+	count := this.L.Len()
 	if count == 0 {
 		return []interface{}{}
 	}
@@ -26,8 +29,6 @@ func (this *SafeLinkedList) PopBack(max int) []interface{} {
 
 	items := make([]interface{}, 0, count)
 
-	this.Lock()
-	defer this.Unlock()
 	for i := 0; i < count; i++ {
 		item := this.L.Remove(this.L.Back())
 		items = append(items, item)
