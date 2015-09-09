@@ -13,6 +13,16 @@ func NewIntStringMap() *IntStringMap {
 	return &IntStringMap{M: make(map[int]string)}
 }
 
+func (this *IntStringMap) Clone() map[int]string {
+	m := make(map[int]string)
+	this.RLock()
+	defer this.RUnlock()
+	for k, v := range this.M {
+		m[k] = v
+	}
+	return m
+}
+
 func (this *IntStringMap) Put(key int, val string) {
 	this.Lock()
 	defer this.Unlock()
@@ -58,4 +68,12 @@ func (this *IntStringMap) Remove(key int) {
 	this.Lock()
 	defer this.Unlock()
 	delete(this.M, key)
+}
+
+func (this *IntStringMap) RemoveBatch(keys []int) {
+	this.Lock()
+	defer this.Unlock()
+	for _, key := range keys {
+		delete(this.M, key)
+	}
 }
